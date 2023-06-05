@@ -4,9 +4,6 @@ import localforage from "localforage";
 import { getMedicalAssessments, getPrefillXML, getSubmissionXML } from "../api";
 import axios from "axios";
 
-const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
-const OPEN_ROSA_SERVER_URL = process.env.REACT_APP_OPEN_ROSA_SERVER_URL
-
 export const makeHasuraCalls = async (query) => {
   const userData = getCookie("userData");
   return fetch(process.env.REACT_APP_HASURA_URL, {
@@ -80,6 +77,7 @@ export const logout = () => {
   localStorage.clear();
   sessionStorage.clear();
   window.location = "/";
+  localforage.removeItem('appEnvs')
   removeCookie("userData");
 };
 
@@ -101,24 +99,31 @@ export const isImage = (key, filename) => {
 }
 
 
-export const getFromLocalForage = async (key) => {
+export const getFromLocalForage = async (key, isLoggedIn = true) => {
   const user = getCookie("userData");
   try {
-    return await localforage.getItem(user.user.id + "_" + key);
+    if (isLoggedIn)
+      return await localforage.getItem(user.user.id + "_" + key);
+    else
+      return await localforage.getItem(key);
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-export const setToLocalForage = async (key, value) => {
+export const setToLocalForage = async (key, value, isLoggedIn = true) => {
   const user = getCookie("userData");
-
-  await localforage.setItem(user.user.id + "_" + key, value);
+  if (isLoggedIn)
+    await localforage.setItem(user.user.id + "_" + key, value);
+  else
+    await localforage.setItem(key, value);
 }
 
 export const handleFormEvents = async (startingForm, afterFormSubmit, e) => {
   const user = getCookie("userData");
+  const appEnvs = await getFromLocalForage('appEnvs', false);
+  const ENKETO_URL = appEnvs.ENKETO_URL;
   if (
     e.origin == ENKETO_URL &&
     JSON.parse(e?.data)?.state !== "ON_FORM_SUCCESS_COMPLETED"
@@ -192,6 +197,9 @@ export const cacheForms = async (formName) => {
 
 export const getOfflineCapableForm = async (formId) => {
   try {
+    const appEnvs = await getFromLocalForage('appEnvs', false);
+    const ENKETO_URL = appEnvs.ENKETO_URL;
+    const OPEN_ROSA_SERVER_URL = appEnvs.OPEN_ROSA_SERVER_URL;
     if (navigator.onLine) {
       let res = await axios.post(ENKETO_URL + "/api/v2/survey/offline",
         {
