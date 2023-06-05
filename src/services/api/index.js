@@ -1,11 +1,8 @@
 import axios from "axios";
-import { makeHasuraCalls } from "../utils";
+import { getFromLocalForage, makeHasuraCalls } from "../utils";
 
 const BASE_URL = process.env.REACT_APP_USER_SERVICE_URL;
 const applicationId = process.env.REACT_APP_APPLICATION_ID;
-
-const ENKETO_MANAGER_URL = process.env.REACT_APP_ENKETO_MANAGER_URL;
-// const ENKETO_URL = process.env.REACT_APP_ENKETO_URL;
 
 export const loginMedical = async (username, pass) => {
   try {
@@ -113,6 +110,8 @@ export const getMedicalAssessmentsUpcoming = () => {
 
 export const getPrefillXML = async (form, onFormSuccessData, prefillXML, imageUrls) => {
   try {
+    const appEnvs = await getFromLocalForage('appEnvs', false);
+    const ENKETO_MANAGER_URL = appEnvs.ENKETO_MANAGER_URL;
     const res = await axios.post(
       `${ENKETO_MANAGER_URL}/prefillXML?form=${form}&onFormSuccessData=${encodeURI(
         JSON.stringify(onFormSuccessData)
@@ -132,6 +131,8 @@ export const getPrefillXML = async (form, onFormSuccessData, prefillXML, imageUr
 
 export const getSubmissionXML = async (form, prefillXML, imageUrls) => {
   try {
+    const appEnvs = await getFromLocalForage('appEnvs', false);
+    const ENKETO_MANAGER_URL = appEnvs.ENKETO_MANAGER_URL;
     const res = await axios.post(
       `${ENKETO_MANAGER_URL}/submissionXML?form=${form}`,
       {
@@ -150,6 +151,8 @@ export const getSubmissionXML = async (form, prefillXML, imageUrls) => {
 export const getRandomOsceFormsTeacher = async (type) => {
   try {
     // const years = ['1st_year', '2nd_year', '3rd_year'];
+    const appEnvs = await getFromLocalForage('appEnvs', false);
+    const ENKETO_MANAGER_URL = appEnvs.ENKETO_MANAGER_URL;
     const years = ["1st_year"];
     const year = years[Math.floor(Math.random() * years.length)];
     const res = await axios.get(
@@ -164,6 +167,8 @@ export const getRandomOsceFormsTeacher = async (type) => {
 
 export const getRandomOsceForm = async (type, year, speciality) => {
   try {
+    const appEnvs = await getFromLocalForage('appEnvs', false);
+    const ENKETO_MANAGER_URL = appEnvs.ENKETO_MANAGER_URL;
     let url = speciality
       ? `${ENKETO_MANAGER_URL}/osceForm/${type}/${year}/${speciality}`
       : `${ENKETO_MANAGER_URL}/osceForm/${type}/${year}`;
