@@ -16,13 +16,30 @@ import AssessmentType from "./pages/AssessmentType";
 import OfflineOdkForm from "./pages/OfflineOdkForm";
 import toast, { Toaster } from 'react-hot-toast';
 import { saveDataToHasura } from "./services/api";
+import { useServiceWorker } from "./hooks/useServiceWorker";
 export const StateContext = createContext();
 
 function App() {
   const [state, setState] = useState();
+  const { waitingWorker, showReload, reloadPage } = useServiceWorker();
   useEffect(() => {
     const user = getCookie("userData");
   }, []);
+
+  useEffect(() => {
+    if (showReload && waitingWorker) {
+      toast((t) => (
+        <span>
+        New Version Available
+          <button onClick={() => window.location.reload()}>
+           Refresh
+          </button>
+        </span>
+      ));
+    } else {
+
+    };
+  }, [waitingWorker, showReload, reloadPage]);
 
   useEffect(() => {
     window.addEventListener('online', async () => {

@@ -1,6 +1,6 @@
 const registerServiceWorker = () => {
     console.log(process.env.PUBLIC_URL)
-    let PATH = `${process.env.PUBLIC_URL}/sw.js`
+     let PATH = `${process.env.PUBLIC_URL}/sw.js?v1`
 
 
     if ("serviceWorker" in navigator) {
