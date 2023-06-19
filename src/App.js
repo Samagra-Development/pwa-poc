@@ -18,6 +18,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { saveDataToHasura } from "./services/api";
 import { useServiceWorker } from "./hooks/useServiceWorker";
 import CommonModal from "./components/Modal";
+import GenericOdkFormProvider from "./providers/form-provider";
 export const StateContext = createContext();
 
 function App() {
@@ -88,11 +89,15 @@ function App() {
   return (
     <div className="App">
       <StateContext.Provider value={{ state, setState }}>
+    
         <BrowserRouter>
-          <div style={{ opacity: 0, position: 'absolute', zIndex: -1 }}>
+        <GenericOdkFormProvider>
+          {/* <div style={{ opacity: 0, position: 'absolute', zIndex: -1 }}>
             <GenericOdkForm />
-          </div>
+          </div> */}
+         
           <Routes>
+           
             <Route
               path={ROUTE_MAP.root}
               element={
@@ -158,8 +163,11 @@ function App() {
               }
             />
             <Route path={ROUTE_MAP.root_star} element={<Home />} />
+           
           </Routes>
+          </GenericOdkFormProvider>
         </BrowserRouter>
+       
       </StateContext.Provider>
       <Toaster />
       {envModal && <CommonModal>
