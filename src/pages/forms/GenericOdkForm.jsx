@@ -14,6 +14,7 @@ const GenericOdkForm = () => {
   const [surveyUrl, setSurveyUrl] = useState("");
   let { formName } = useParams();
   const scheduleId = useRef();
+  const [formSubmitted] = useState(false);
   const formSpec = {
     forms: {
       [formName]: {
@@ -143,13 +144,26 @@ const GenericOdkForm = () => {
   }, []);
 
   const getSurveyUrl = async () => {
-    let surveyUrl = await getOfflineCapableForm('widgets');
+    let surveyUrl = await getOfflineCapableForm('Nursing Form-Medical (CRP)');
+    // let surveyUrl = await getOfflineCapableForm('widgets');
     console.log("SurveyURL:", surveyUrl);
     if (!surveyUrl)
       setSurveyUrl("https://8065-samagradevelop-workflow-871i2twcw0a.ws-us98.gitpod.io/x/wnoqac4d")
     else
       setSurveyUrl(surveyUrl);
   }
+
+
+  // TODO
+  const clearFormCache = async () => {
+    let formUri = await getFromLocalForage('formUri');
+    const formId = formUri.slice(formUri.lastIndexOf('/') + 1);
+    const enketoDB = indexedDB.open('enketo', 3);
+    indexedDB.databases().then(r => console.log(r))
+    console.log(enketoDB)
+  }
+
+
 
   return (
     <CommonLayout back={ROUTE_MAP.assessment_type}>
@@ -172,6 +186,7 @@ const GenericOdkForm = () => {
             />
           </>
         )}
+        {/* <div className="mt-5 p-4 border border-orange-300" onClick={clearFormCache}> Clear saved data</div> */}
       </div>
     </CommonLayout>
   );
