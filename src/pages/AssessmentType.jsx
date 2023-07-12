@@ -30,7 +30,6 @@ const AssessmentType = () => {
   }
 
   const handleInput = async (setter, val, type) => {
-    if (!navigator.onLine) setToLocalForage('syncData', true);
     setter(val);
     let appData = await getFromLocalForage('appData') || {};
     appData[type] = val;
@@ -38,10 +37,14 @@ const AssessmentType = () => {
   }
 
   const saveDataOnline = async () => {
-    saveDataToHasura({
-      text_input: textData,
-      date_input: dateData
-    })
+    if (!navigator.onLine) {
+      setToLocalForage('syncData', true);
+      toast('Your data has been saved and will be synced with server once internet is available ✅')
+    } else
+      saveDataToHasura({
+        text_input: textData,
+        date_input: dateData
+      })
   }
 
   useEffect(() => {

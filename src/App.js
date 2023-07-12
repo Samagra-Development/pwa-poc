@@ -89,6 +89,9 @@ function App() {
     <div className="App">
       <StateContext.Provider value={{ state, setState }}>
         <BrowserRouter>
+          <div style={{ opacity: 0, position: 'absolute', zIndex: -1 }}>
+            <GenericOdkForm />
+          </div>
           <Routes>
             <Route
               path={ROUTE_MAP.root}
